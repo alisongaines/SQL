@@ -1,0 +1,27 @@
+-- create a store database. This database is the inventory for the merchandise of a brewery.
+
+CREATE TABLE inventory (id INTEGER PRIMARY KEY, item TEXT, price INTEGER, quantity INTEGER, sold INTEGER);
+INSERT INTO inventory VALUES
+(1, "Last Call red hat", 15, 10, 10), 
+(2, "Last Call black hat", 15, 5, 15), 
+(3, "Last Call basic tee white", 20, 10, 15),
+(4, "Last Call basic tee red", 20, 15, 10), 
+(5, "Last Call basic tee black", 20, 20, 5), 
+(6, "Last Call quarter zip", 45, 10, 20), 
+(7, "Last Call long sleeve gray", 25, 5, 15), (8, "Last Call long sleeve black", 25, 3, 17), 
+(9, "Last Call pint glass", 10, 15, 5), 
+(10, "Last Call shot glass", 8, 5, 10), 
+(11, "Last Call sticker large", 4, 19, 11), 
+(12, "Last Call sticker medium", 3, 14, 16), 
+(13, "Last Call sticker small", 2, 24, 6), 
+(14, "Last Call growler", 15, 6, 4), 
+(15, "Last Call goblet", 8, 3, 7);
+
+-- display the database ordered by price for items priced over 15
+SELECT * FROM inventory WHERE price >15 ORDER BY price;
+
+-- how many items are still available?
+SELECT SUM(quantity) from inventory;
+
+-- how many items have been sold?
+SELECT SUM(sold) from inventory;
