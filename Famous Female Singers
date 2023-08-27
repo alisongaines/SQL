@@ -1,0 +1,98 @@
+Project: Famous People
+In this project, you’re going to make your own table with some small set of “famous people”.
+Make more tables about things they do and join those to create nice human readable lists.
+
+
+
+/* Create table about most famous female singers */
+
+CREATE TABLE female_singers 
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT, 
+    age INTEGER, 
+    genre TEXT);
+
+INSERT INTO female_singers (name, age, genre) 
+VALUES ("Madonna", 65, "Pop"), 
+("Celine Dion", 55, "Pop"), 
+("Rihanna", 35, "R&B"), 
+("Beyonce", 41, "R&B"), 
+("Adele", 35, "Pop"), 
+("Katy Perry", 38, "Pop"), 
+("Taylor Swift", 33, "Pop"), 
+("Ariana Grande", 30, "Pop"), 
+("Mariah Carey", 54, "Pop"), 
+("J.Lo", 54, "Latin Pop"),
+("Janet Jackson", 57, "Pop"),
+("Diana Ross", 79, "R&B"),
+("Lady Gaga", 37, "Pop"),
+("Cher", 77, "Pop"),
+("Gloria Estefan", 65, "Latin Pop");
+
+
+/* Create a second table for the most popular album and song for each artist */
+
+
+CREATE TABLE music
+    (id INTEGER PRIMARY KEY AUTOINCREMENT, singer_id INTEGER, top_album TEXT, top_song TEXT, number1_hits INTEGER);
+
+INSERT INTO music (singer_id, top_album, top_song, number1_hits)
+VALUES 
+(1, "The Immaculate Collection", "Like a Virgin", 12),
+(2, "Falling Into You", "Because You Loved Me", 4),
+(3, "Good Girl Gone Bad", "We Found Love", 14),
+(4, "Lemonade", "Irreplacable", 8),
+(5, "21", "Rolling in the Deep", 5),
+(6, "Teenage Dream", "Dark Horse", 9),
+(7, "Fearless", "Anti-Hero", 9),
+(8, "Yours Truly", "7 rings", 7),
+(9, "Music Box", "All I Want for Christmas is You", 19),
+(10, "J.Lo", "I'm Real", 4),
+(11, "janet.", "Together Again", 10),
+(12, "I Love You", "Endless Love", 6),
+(13, "The Fame", "Just Dance", 5),
+(14, "Believe", "Believe", 4),
+(15, "Greatest Hits", "Anything For You", 3);
+
+
+/* Inner Join */
+/* Create a table of all the top female singers' songs for each genre using filters and ordered by key words*/
+
+SELECT female_singers.genre, music.top_song FROM female_singers
+    JOIN music
+    ON female_singers.id = music.singer_id
+    ORDER BY genre;
+    
+SELECT female_singers.genre, music.top_song FROM female_singers
+    JOIN music
+    ON female_singers.id = music.singer_id
+    WHERE genre="Pop"
+    ORDER BY top_song ASC;
+
+SELECT female_singers.genre, music.top_song FROM female_singers
+    JOIN music
+    ON female_singers.id = music.singer_id
+    WHERE genre="R&B"
+    ORDER BY top_song ASC;
+
+SELECT female_singers.genre, music.top_song FROM female_singers
+    JOIN music
+    ON female_singers.id = music.singer_id
+    WHERE genre="Latin Pop";
+
+
+/* Inner Join* /
+/* Create a table to show the female singers with over 10 number 1 hits using filters and ordered by key words*/
+
+SELECT female_singers.name, music.number1_hits FROM female_singers
+    JOIN music
+    ON female_singers.id=music.singer_id
+    WHERE number1_hits >10
+    ORDER BY number1_hits DESC;
+
+
+/* Outer Joins */
+/* Join both tables to show the singers with their top album and song */
+SELECT female_singers.name, music.top_album, music.top_song FROM female_singers
+    LEFT OUTER JOIN music
+    ON female_singers.id=music.singer_id;
