@@ -72,3 +72,13 @@ END AS AvgEnergy
 FROM BIT_DB.Spotifydata
 GROUP BY AvgEnergy
 ORDER BY COUNT(energy);
+
+/* Show every artist with an average popularity of 90 or above with a label as "Top Star."
+
+WITH top_star_spotify AS (SELECT artist_name, AVG(popularity)as average_popularity
+FROM Spotifydata
+GROUP BY artist_name)
+
+SELECT artist_name, average_popularity, 'Top Star' AS tag
+FROM top_star_spotify
+WHERE average_popularity >= 90;
