@@ -1,0 +1,157 @@
+#For this project, I dowloaded the Chinook Digital Media store's sample database from https://www.sqlitetutorial.net/sqlite-sample-database/
+
+#For this project, I curated a list of basic and detailed questions to perform an analysis of Chinook's dataset. 
+
+
+
+
+#The following SQL was written to answer basic questions to familiarize myself with the store's data:
+
+#1. How many employees work at Chinook?
+SELECT COUNT(EmployeeId) 
+FROM chinook.employees;
+
+#2. What are the employee roles at Chinook?
+SELECT DISTINCT Title 
+FROM chinook.employees;
+
+#3. How many employees are in each role?
+SELECT COUNT(EmployeeId), Title 
+FROM chinook.employees
+GROUP BY Title;
+
+#4. How many total customers are in this dataset?
+SELECT COUNT(CustomerId)
+FROM chinook.customers;
+
+#5. How many countries have purchased from Chinook? 
+SELECT COUNT(DISTINCT Country) 
+FROM chinook.customers;
+
+#6. Which countries have purchased from Chinook?
+SELECT DISTINCT Country
+FROM chinook.customers;
+
+#7. What is this store's total number of sales?
+SELECT COUNT(InvoiceId)
+FROM chinook.invoices;
+
+#8. What is this store's total earned in sales?
+SELECT SUM(Total) 
+FROM chinook.invoices;
+
+#9. What is the date range of this store's sales data?
+SELECT MIN(InvoiceDate), MAX(InvoiceDate)
+FROM chinook.invoices;
+
+#10. What and how many genres, artists, media types, and playlists does this store have?
+SELECT Name FROM chinook.genres ORDER BY Name;
+SELECT COUNT(Name) FROM chinook.genres;
+SELECT Name FROM chinook.artists;
+SELECT COUNT(Name) FROM chinook.artists;
+SELECT Name FROM chinook.media_types;
+SELECT COUNT(Name) FROM chinook.media_types;
+SELECT Name FROM chinook.playlists;
+SELECT Count(PlaylistId) FROM chinook.playlists;
+
+
+
+
+#The following SQL was written to do a deep dive and analysis of the store's data:
+
+#1. Which agents had the most customers?
+SELECT 
+    DISTINCT c.SupportRepId AS Agent, 
+    COUNT(C.CustomerId) AS TotalCustomers, 
+    e.FirstName, 
+    e.LastName
+FROM chinook.customers c
+    JOIN chinook.employees e ON c.SupportRepId = e.EmployeeId
+GROUP BY Agent
+ORDER BY TotalCustomers DESC;
+
+#2. Which agents sold the most in price? How much did they sell?
+SELECT 
+    DISTINCT SUM(i.Total) AS TotalCost, 
+    c.SupportRepId AS Agent, 
+    e.FirstName, 
+    e.LastName
+FROM chinook.invoices i
+    JOIN chinook.customers c ON i.CustomerId = c.CustomerId
+    JOIN chinook.employees e ON c.SupportRepId = e.EmployeeId
+GROUP BY Agent
+ORDER BY TotalCost DESC;
+
+#3. Which country had the highest number of sales with how many invoices? How many customers are from that country? What was the total earned in sales from that country?
+SELECT 
+    BillingCountry, 
+    COUNT(InvoiceId) AS InvoiceCount, 
+    COUNT(DISTINCT CustomerId) AS CustomerCount, 
+    ROUND(SUM(Total)) AS TotalSales
+FROM chinook.invoices
+GROUP BY BillingCountry
+ORDER BY InvoiceCount DESC;
+
+#4. Which country had the lowest number in sales with how many invoices? How many customers are from there? What was the total earned in sales from there?
+SELECT 
+    BillingCountry,
+    COUNT(InvoiceId) AS InvoiceCount,
+    COUNT(DISTINCT CustomerId) AS CustomerCount,
+    ROUND(SUM(Total)) AS TotalSales
+FROM chinook.invoices
+GROUP BY BillingCountry
+ORDER BY InvoiceCount;
+
+#5. How many invoices were there each year? Which year(s) had the highest total sales?
+SELECT 
+    strftime('%Y', InvoiceDate) AS Year,
+    COUNT(InvoiceId) AS 'TotalInvoices'
+FROM chinook.invoices
+GROUP BY Year
+ORDER BY TotalInvoices DESC;
+
+#6. Write a query that shows all tracks, album name, media type, and genre.
+SELECT 
+    a.Title AS Album, 
+    t.Name AS TrackName, 
+    g.Name AS Genre, 
+    m.Name AS MediaType
+FROM chinook.tracks t
+    JOIN chinook.genres g ON t.GenreId = g.GenreId
+    JOIN chinook.media_types m ON t.MediaTypeId = m.MediaTypeId
+    JOIN chinook.albums a ON t.AlbumId = a.AlbumId
+ORDER BY Album;
+
+#7. What is the most popular genre from Canada?
+SELECT Genre, COUNT(*) AS GenreCount
+FROM (
+    SELECT g.Name AS Genre
+    FROM chinook.invoices i
+    JOIN chinook.invoice_items ii ON i.InvoiceId = ii.InvoiceId
+    JOIN chinook.tracks t ON ii.TrackId = t.TrackId
+    JOIN chinook.genres g ON t.GenreId = g.GenreId
+    WHERE i.BillingCountry = 'Canada'
+) AS Subquery
+GROUP BY Genre
+ORDER BY GenreCount DESC;
+
+#8. What are this store's top 3 most popular playlists?
+SELECT PlaylistName, COUNT(*) AS PlaylistCount
+FROM (
+    SELECT p.name AS PlaylistName
+    FROM chinook.invoice_items i
+    JOIN chinook.playlist_track pt ON i.TrackId = pt.TrackId
+    JOIN chinook.playlists p ON pt.PlaylistId = p.PlaylistId
+) AS Subquery
+GROUP BY PlaylistName
+ORDER BY PlaylistCount DESC LIMIT 3;
+
+
+
+
+
+
+
+
+
+
